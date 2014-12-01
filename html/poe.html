@@ -71,8 +71,8 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1>Welcome</h1>
-                        <p>Use the menu on the left to manage your home</p>
+                        <h1 id="#poetable">Points of Entry</h1>
+                        <p>Manage Points of Entry below</p>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,19 @@
 
     <!-- Menu Toggle Script -->
     <script>
-    
+
+    $.getJSON('/poe/getAllPOE.php', function(json) {
+        var items = [];
+          $.each( json, function( key, val ) {
+            items.push( key );
+          });
+         
+          $( "<ul/>", {
+            html: items.join( "" )
+          }).appendTo( "#poetable" );
+        }); 
+
+
     </script>
 
 </body>
