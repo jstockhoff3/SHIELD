@@ -7,10 +7,8 @@
 //	if known=0
 //		visitor is simply set to ACK=1 in AllVisitors table indicating visitor has been viewed
 
-
-
-include(dirname(__FILE__)."/../shield_DB_info.php");
-include(dirname(__FILE__)."/../shield_PHP_lib.php");
+include(dirname(__FILE__)."/../libs/shield_DB_info.php");
+include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
 $name=$_GET['name'];
 $known=$_GET['known'];

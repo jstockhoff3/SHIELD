@@ -1,6 +1,6 @@
 <?php
-include(dirname(__FILE__)."/../shield_DB_info.php");
-include(dirname(__FILE__)."/../shield_PHP_lib.php");
+include(dirname(__FILE__)."/../libs/shield_DB_info.php");
+include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
 $con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error')); 
 $query = "SELECT * FROM AlarmHistory WHERE Ack=0 ORDER BY AlarmTime DESC LIMIT 1;";

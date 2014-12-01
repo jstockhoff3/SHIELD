@@ -1,10 +1,11 @@
 <?php
 
 function shield_output($data,$success,$err){
-	$output = array(
-		'Output' => $data,
+	$output = array();
+	$output[0] = $data;
+	$output[1] = array(
 		'Successful' => $success,
-		'Error Msg' => $err
+		'Error' => $err
 		);
 	print(json_encode($output));
 }

@@ -1,6 +1,6 @@
 <?php
-include(dirname(__FILE__)."/../shield_DB_info.php");
-include(dirname(__FILE__)."/../shield_PHP_lib.php");
+include(dirname(__FILE__)."/../libs/shield_DB_info.php");
+include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
 $system=$_GET['systemName'];
 

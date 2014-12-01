@@ -5,8 +5,8 @@
 //motionFound 1: trip alarm if triggerStatus:1
 //			  0: trip alarm if triggerStatus:0
 
-include(dirname(__FILE__)."/../shield_DB_info.php");
-include(dirname(__FILE__)."/../shield_PHP_lib.php");
+include(dirname(__FILE__)."/../libs/shield_DB_info.php");
+include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
 $sensor=$_GET['sensorName'];
 $motionStatus=$_GET['motionFound'];

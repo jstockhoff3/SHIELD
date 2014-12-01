@@ -3,9 +3,8 @@
 //triggerStatus 1: trigger alarm if motion found
 //				0: no action if motion found
 
-
-include(dirname(__FILE__)."/../shield_DB_info.php");
-include(dirname(__FILE__)."/../shield_PHP_lib.php");
+include(dirname(__FILE__)."/../libs/shield_DB_info.php");
+include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
 $sensor=$_GET['sensorName'];
 $triggerStatus=$_GET['triggerStatus'];

@@ -6,8 +6,8 @@
 //		not acknowledged ACK=0
 //      TimeVisited = time of execution of this script
 
-include(dirname(__FILE__)."/../shield_DB_info.php");
-include(dirname(__FILE__)."/../shield_PHP_lib.php");
+include(dirname(__FILE__)."/../libs/shield_DB_info.php");
+include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
 $image=$_GET['image'];
 
