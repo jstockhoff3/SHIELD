@@ -12,7 +12,7 @@
     <title>SHIELD - Dashboard</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="css/simple-sidebar.css" rel="stylesheet">
@@ -71,8 +71,9 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 id="#poetable">Points of Entry</h1>
+                        <h1>Points of Entry</h1>
                         <p>Manage Points of Entry below</p>
+                        <div id='poetable'></div>
                     </div>
                 </div>
             </div>
@@ -91,17 +92,29 @@
     <!-- Menu Toggle Script -->
     <script>
 
-    $.getJSON('/poe/getAllPOE.php', function(json) {
-        var items = [];
-          $.each( json, function( key, val ) {
-            items.push( key );
-          });
-         
-          $( "<ul/>", {
-            html: items.join( "" )
-          }).appendTo( "#poetable" );
-        }); 
+    $.getJSON('poe/getAllPOE.php', function(data){ 
+        table=['<table>'];
+        obj = data[0][0];
+        $.each(obj, function(key, value){
+            table = table +'<th>'+key+'</th>';
+            });
+        table = table + '<th>Toggle?</th>';
 
+        obj = data[0];
+        $.each(obj,function(idx,obj){
+            table = table + '<tr>';
+            $.each(obj,function(key,value){
+                table = table + '<td>'+value+'</td>';
+                console.log(key+value);
+            })
+            table = table + '<td><input id="poetable-toggle" type="button" value="Toggle"></td></tr>';
+        });
+        $( table + '</table>').appendTo('#poetable');
+    });
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+    });
 
     </script>
 
