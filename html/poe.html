@@ -70,10 +70,12 @@
         <div id="page-content-wrapper">
             <div class="container-fluid">
                 <div class="row">
+                    <h1>Points of Entry <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a> </h1>
                     <div class="col-lg-12">
-                        <h1>Points of Entry</h1>
                         <h3>Management</h3>
                         <div id='poetable'></div>
+                    </div>
+                    <div class="col-lg-12">
                         <h3>Add POE</h3>
                         <form id='newpoeform'>
                         New POE Name:    <input type="text" name="newname">
@@ -101,6 +103,11 @@
     <!-- Menu Toggle Script -->
     <script>
 
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+
     $.getJSON('poe/getAllPOE.php', function(data){ 
         table=['<table>'];
         obj = data[0][0];
@@ -113,7 +120,25 @@
         $.each(obj,function(idx,obj){
             table = table + '<tr>';
             $.each(obj,function(key,value){
-                table = table + '<td>'+value+'</td>';
+                if(key=='Locked'){
+                    if(value==1){
+                        table = table + '<td>Locked</td>'
+                    }
+                    else if(value==0){
+                        table = table + '<td>Unlocked</td>'
+                    }
+                }
+                else if(key=='Open'){
+                    if(value==1){
+                        table = table + '<td>Open</td>'
+                    }
+                    else if(value==0){
+                        table = table + '<td>Closed</td>'
+                    }
+                }
+                else{
+                        table = table + '<td>'+value+'</td>';
+                }
                 if(key=='EntryName'){
                     curEntry = value;
                 }
@@ -149,7 +174,7 @@
         sysname = $form.find('input[name="sysname"]').val();
         $.get("poe/createPOE.php",{poeName:entryName,systemName:sysname})
             .done(function(data){
-                $("#poetable").location.reload();
+                location.reload();
             });
     });
 
