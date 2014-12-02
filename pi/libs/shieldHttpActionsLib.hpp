@@ -186,7 +186,8 @@ int isSuccess(string data, string *errorMsg){
 
 int lockPOE(string POEname){
   string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=lock";
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName="
+               + POEname + "&action=lock";
   string rawData = http_GET(URL);
   if(isSuccess(rawData,errorMsg)){
     return 1;
@@ -197,7 +198,8 @@ int lockPOE(string POEname){
 
 int unlockPOE(string POEname){
   string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=unlock";
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName="
+               + POEname + "&action=unlock";
   string rawData = http_GET(URL);
   if(isSuccess(rawData,errorMsg)){
     return 1;
@@ -208,7 +210,8 @@ int unlockPOE(string POEname){
 
 int openPOE(string POEname){
   string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=open";
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" 
+                + POEname + "&action=open";
   string rawData = http_GET(URL);
   if(isSuccess(rawData,errorMsg)){
     return 1;
@@ -219,7 +222,8 @@ int openPOE(string POEname){
 
 int closePOE(string POEname){
   string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=close";
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" 
+                + POEname + "&action=close";
   string rawData = http_GET(URL);
   if(isSuccess(rawData,errorMsg)){
     return 1;
@@ -269,7 +273,8 @@ int checkSystemStatus(string systemName, int* armed, int* alarmActive){
 
 int setMotionStatus(string sensorName, int motionStatus){
   string *errorMsg;
-  string URL = "http://192.168.1.3/motion/setMotionStatus.php?sensorName=" + sensorName + "&motionFound=" + motionStatus + "&triggerStatus=1";
+  string URL = "http://192.168.1.3/motion/setMotionStatus.php?sensorName="
+               + sensorName + "&motionFound=" + motionStatus + "&triggerStatus=1";
   string rawData = http_GET(URL);
   if(isSuccess(rawData,errorMsg)){
     return 1;
