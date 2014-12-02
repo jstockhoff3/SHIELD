@@ -12,7 +12,7 @@
     <title>SHIELD - Dashboard</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="css/simple-sidebar.css" rel="stylesheet">
@@ -70,9 +70,9 @@
         <div id="page-content-wrapper">
             <div class="container-fluid">
                 <div class="row">
+                    <h1>Welcome <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></h1>
+                    Use the menu on the left to manage your home
                     <div class="col-lg-12">
-                        <h1>Welcome</h1>
-                        <p>Use the menu on the left to manage your home</p>
                     </div>
                 </div>
             </div>
@@ -90,6 +90,11 @@
 
     <!-- Menu Toggle Script -->
     <script>
+
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
     
     </script>
 

@@ -1,5 +1,10 @@
 <?php
-$target_dir = "uploads/";
+
+include(dirname(__FILE__)."/libs/shield_DB_info.php");
+include(dirname(__FILE__)."/libs/shield_PHP_lib.php");
+
+
+$target_dir = "images/newcaptures/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
 $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -41,4 +46,33 @@ if ($uploadOk == 0) {
         echo "Sorry, there was an error uploading your file.\n";
     }
 }
+
+$new = generateRandomString();
+$new = "$new.$imageFileType";
+$new = $target_dir . basename($new);
+rename($target_file,$new);
+
+$image=$new;
+
+$con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error'));
+$res = mysqli_query($con,"SELECT * FROM AllVisitors");
+
+if($image==null){
+    shield_output('None',0,'No image path entered');
+}
+else{   
+    if($res){
+        $query=
+        "INSERT INTO AllVisitors (TimeVisited,Image) VALUES (NOW(),'$image');";
+        mysqli_query($con,$query);
+        shield_output("Visitor created",1,'None');
+    }
+    else{
+        shield_output('None',0,'Query Error');
+    }
+}
+
+
+mysqli_close($con);
+
 ?>
