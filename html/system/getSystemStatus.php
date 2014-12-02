@@ -15,6 +15,7 @@ if($sth){
 			'AlarmActive' => $r["AlarmActive"],
 			);
 		shield_output($return,1,'None');
+		poeAlarmTrigger($con);
 	}
 	else{
 		shield_output('None',0,'System Not Found');
