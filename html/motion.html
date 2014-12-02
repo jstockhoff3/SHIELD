@@ -73,6 +73,7 @@
                     <h1>Motion <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></h1>
                     <p>Manage Motion Sensors below</p>
                     <div class="col-lg-12">
+                        <div id='allsensors'></div>
                     </div>
                 </div>
             </div>
@@ -96,6 +97,57 @@
         $("#wrapper").toggleClass("toggled");
     });
     
+
+    $.getJSON('motion/getAllMotionStatus.php', function(data){ 
+        table=['<table>'];
+        obj = data[0][0];
+        $.each(obj, function(key, value){
+            if(key=='TimeFound'){
+                    table = table + '<th>Motion Last Found</th>';
+            }
+            else if(key=='TriggerAlarm'){
+                    table = table + '<th>Triggers Alarm?</th>';
+            }
+            else{
+                table = table +'<th>'+key+'</th>';
+            }
+            });
+        table = table + '<th>Toggle Trigger?</th>';
+
+        obj = data[0];
+        $.each(obj,function(idx,obj){
+            table = table + '<tr>';
+            $.each(obj,function(key,value){
+                if(key=='TriggerAlarm'){
+                    if(value==1)
+                    {
+                        table = table + '<td>Yes</td>'
+                    }
+                    else if(value==0){
+                        table = table + '<td>No</td>'
+                    }
+                }
+                else{
+                    table = table + '<td>'+value+'</td>';
+                }
+                if(key=='Name'){
+                    senseName=value;
+                }
+            })
+            table = table + '<td><input id="triggerToggle" sens='+senseName+' type="button" value="Toggle"></td></tr>';
+        });
+        $( table + '</table>').appendTo('#allsensors');
+    });
+
+    $("#allsensors").on('click', 'input[id=triggerToggle]',function(){
+        button = $(this);
+        var sens = button.attr("sens");
+        $.get("motion/motionToggle.php",{sens:sens})
+            .done(function(data){
+                window.location.reload();
+            });
+    });
+
     </script>
 
 </body>

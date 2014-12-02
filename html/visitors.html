@@ -70,9 +70,19 @@
         <div id="page-content-wrapper">
             <div class="container-fluid">
                 <div class="row">
+                    <h1>Visitors <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a> </h1>   
+                    Click images to enlarge
+                    <h3>Unacknowledged Visitors:</h3>
                     <div class="col-lg-12">
-                        <h1>Visitors <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></h1>
-                        Manage Visitors below
+                        <div id='newvisitors'></div>
+                    </div>
+                    <h3>Known Visitors:</h3>
+                    <div class="col-lg-12">
+                        <div id='knownvisitors'></div>
+                    </div>
+                    <h3>Full Visitor History:</h3>
+                    <div class="col-lg-12">
+                        <div id='fullvisitorhistory'></div>
                     </div>
                 </div>
             </div>
@@ -94,6 +104,113 @@
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
+    });
+
+    $.getJSON('visitors/getVisitorHistory.php', function(data){ 
+        table=['<table>'];
+        obj = data[0][0];
+        $.each(obj, function(key, value){
+            table = table +'<th>'+key+'</th>';
+            });
+        //table = table + '<th>Acknowledge?</th>';
+
+        obj = data[0];
+        $.each(obj,function(idx,obj){
+            table = table + '<tr>';
+            $.each(obj,function(key,value){
+                if(key=='Image'){
+                    table = table + '<td><a href="'+value+'" target="_blank"><img src='+value+' height=50px width=50px></a></td>';
+                }
+                else{
+                    table = table + '<td>'+value+'</td>';
+                }
+                if(key=='TimeVisited'){
+                    curEntry = value;
+                }
+            })
+            //table = table + '<td><input id="alarmACK" entry="'+curEntry+'" type="button" value="ACK"></td></tr>';
+        });
+        $( table + '</table>').appendTo('#fullvisitorhistory');
+    });
+
+    $.getJSON('visitors/getKnownVisitors.php', function(data){ 
+        table=['<table>'];
+        obj = data[0][0];
+        $.each(obj, function(key, value){
+            table = table +'<th>'+key+'</th>';
+            });
+        //table = table + '<th>Acknowledge?</th>';
+
+        obj = data[0];
+        $.each(obj,function(idx,obj){
+            table = table + '<tr>';
+            $.each(obj,function(key,value){
+                if(key=='Image'){
+                    table = table + '<td><a href="'+value+'" target="_blank"><img src='+value+' height=50px width=50px></a></td>';
+                }
+                else{
+                    table = table + '<td>'+value+'</td>';
+                }
+                if(key=='TimeVisited'){
+                    curEntry = value;
+                }
+            })
+            //table = table + '<td><input id="alarmACK" entry="'+curEntry+'" type="button" value="ACK"></td></tr>';
+        });
+        $( table + '</table>').appendTo('#knownvisitors');
+    });
+
+    $.getJSON('visitors/getNewVisitors.php', function(data){ 
+        table=['<table>'];
+        obj = data[0][0];
+        $.each(obj, function(key, value){
+            table = table +'<th>'+key+'</th>';
+            });
+        table = table + '<th>Acknowledge?</th>';
+
+        obj = data[0];
+        $.each(obj,function(idx,obj){
+            table = table + '<tr>';
+            $.each(obj,function(key,value){
+                if(key=='Image'){
+                    table = table + '<td><a href="'+value+'" target="_blank"><img src='+value+' height=50px width=50px></a></td>';
+                }
+                else{
+                    table = table + '<td>'+value+'</td>';
+                }
+                if(key=='TimeVisited'){
+                    curEntry = value;
+                }
+            })
+            table = table + '<td><input id="ackVisitor" entry="'+curEntry+'" type="button" value="ACK"></td></tr>';
+        });
+        $( table + '</table>').appendTo('#newvisitors');
+    });
+
+    $("#newvisitors").on('click', 'input[id=ackVisitor]',function(event){
+        event.preventDefault();
+        if(confirm('Do you know this visitor?')){
+            known=1;
+            name = prompt('Please enter a name:');
+            if(confirm('Do you want to give this visitor entry permissions?')){
+                permit=1;
+            }
+            else{
+                permit=0;
+            }
+        }
+        else{
+            known=0;
+            permit = 0;
+            name = 0;
+        }
+        button = $(this);
+        time = button.attr("entry");
+        $.get("visitors/ackVisitor.php",{time:time,known:known,name:name,permit:permit})
+            .done(function(data){
+                window.location.reload();
+                console.log(data);
+            });
     });
     
     </script>

@@ -26,7 +26,7 @@ function motionAlarmTrigger($link,$sensor){
 			if($systemArmed){
 				$query = "UPDATE System SET AlarmActive=1 WHERE Name='$systemName';";
 				mysqli_query($link,$query);
-				$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'/test/path/img.jpg','$systemName',0,'$sensor');";
+				$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/motion.jpg','$systemName',0,'$sensor');";
 				mysqli_query($link,$query);
 				return 1;
 			}
