@@ -26,7 +26,7 @@ else{
 			if($motionStatus==1){
 				$query=
 				"UPDATE Motion
-				SET MotionFound=1
+				SET MotionFound=1,
 				TimeFound=NOW()
 				WHERE Name='$sensor'";
 			}
