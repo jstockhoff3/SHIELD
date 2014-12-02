@@ -23,17 +23,17 @@ else{
 	if($sth){
 		if($r = mysqli_fetch_assoc($sth)){
 			$systemName = $r['SystemName'];
-			if($motionStatus){
+			if($motionStatus==1){
 				$query=
 				"UPDATE Motion
-				SET MotionFound='$motionStatus',
+				SET MotionFound=1
 				TimeFound=NOW()
 				WHERE Name='$sensor'";
 			}
-			else{
+			else if($motionStatus==0){
 				$query=
 				"UPDATE Motion
-				SET MotionFound='$motionStatus',
+				SET MotionFound=0
 				WHERE Name='$sensor'";
 			}
 			$sth = mysqli_query($con,$query);
