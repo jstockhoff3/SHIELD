@@ -8,7 +8,7 @@
 #include "shieldHttpActionsLib.hpp"
 
 #define MAGLOCK 4
-#define MOTIONSENSOR 1
+#define MOTIONSENSOR 18
 #define CONTACTSENSOR 0
 #define ARMED 14
 #define ALARM 15
@@ -24,6 +24,8 @@ int toggleSystemArmed(string systemName);
 int checkSystemStatus(string systemName, int* armed, int* alarmActive);
 void setGPIOpin(int pinNum, int value);
 int readGPIOpin(int pinNum);
+int setMotionStatus(string sensorName, string motionStatStr);
+int checkMotionStatus(void);
 
 void setGPIOpin(int pinNum, int value){
 		pinMode(pinNum,OUTPUT);
@@ -41,7 +43,6 @@ int readGPIOpin(int pinNum){
 		}else{
 			return 0;
 		}
-
 }
 
 //Make a call to the API to check the status of a POE and update the locked/open variables accordingly
@@ -152,7 +153,9 @@ int checkSystemStatus(string systemName, int* armed, int* alarmActive){
   int returnVal = 0;
   string *errorMsg;
   string URL = "http://192.168.1.3/system/getSystemStatus.php?systemName=" + systemName;
+
   rawData = http_GET(URL);
+ 
   root = json_loads(rawData.c_str(), 0, &error);
 
   if(isSuccess(rawData,errorMsg)){
@@ -184,15 +187,29 @@ int checkSystemStatus(string systemName, int* armed, int* alarmActive){
 
 int setMotionStatus(string sensorName, int motionStatus){
   string *errorMsg;
-  stringstream motionss;
-  motionss << motionStatus;
+  string motionStatStr;
+
+  if(motionStatus){
+  	motionStatStr = "1";
+  }else{
+  	motionStatStr = "0";
+  }
 
   string URL = "http://192.168.1.3/motion/setMotionStatus.php?sensorName="
-               + sensorName + "&motionFound=" + motionss.str() + "&triggerStatus=1";
+               + sensorName + "&motionFound=" + motionStatStr;
   string rawData = http_GET(URL);
   if(isSuccess(rawData,errorMsg)){
     return 1;
   }else{
+  	cout << "Error While Setting Motion Status: " << errorMsg << endl;
     return 0;
+  }
+}
+
+int checkMotionStatus(void){
+  if(readGPIOpin(MOTIONSENSOR) == HIGH){
+  	return 1;
+  }else{
+  	return 0;
   }
 }

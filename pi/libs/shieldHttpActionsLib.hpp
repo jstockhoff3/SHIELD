@@ -122,6 +122,7 @@ int isSuccess(string data, string *errorMsg){
   int returnVal = 0;
 
   root = json_loads(data.c_str(), 0, &error);
+
   if(!root){
       *errorMsg = "error: on line: ";
   }else if(!json_is_array(root)){
