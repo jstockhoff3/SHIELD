@@ -4,7 +4,7 @@ function shield_output($data,$success,$err){
 	$output = array();
 	$output[0] = $data;
 	$output[1] = array(
-		'Successful' => $success,
+		'Successful' => "$success",
 		'Error' => $err
 		);
 	print(json_encode($output));

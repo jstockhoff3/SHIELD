@@ -12,7 +12,7 @@
     <title>SHIELD - Dashboard</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="css/simple-sidebar.css" rel="stylesheet">
@@ -72,7 +72,9 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1>Alarms</h1>
-                        <p>Manage your alarms below</p>
+                        <h3>Unacknowledged Alarms:</h3>
+                        <h3>Full Alarm History:</h3>
+                        <div id='fullalarmhistory'></div>
                     </div>
                 </div>
             </div>
@@ -90,7 +92,30 @@
 
     <!-- Menu Toggle Script -->
     <script>
-    
+
+    $.getJSON('poe/getAllPOE.php', function(data){ 
+        table=['<table>'];
+        obj = data[0][0];
+        $.each(obj, function(key, value){
+            table = table +'<th>'+key+'</th>';
+            });
+        table = table + '<th>Acknowledge?</th>';
+
+        obj = data[0];
+        $.each(obj,function(idx,obj){
+            table = table + '<tr>';
+            $.each(obj,function(key,value){
+                table = table + '<td>'+value+'</td>';
+                if(key=='EntryName'){
+                    curEntry = value;
+                }
+            })
+            table = table + '<td><input id="poetable-toggle" entry="'+curEntry+'" type="button" value="Toggle"></td>'
+             + '<td><input id="poetable-delete" entry="'+curEntry+'" type="button" value="Delete"></td></tr>';
+        });
+        $( table + '</table>').appendTo('#fullalarmhistory');
+    });
+
     </script>
 
 </body>
