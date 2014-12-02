@@ -161,9 +161,6 @@
     });
 
     $.getJSON('visitors/getNewVisitors.php', function(data){ 
-        if(data[1]["Successful"]==0){
-            $('<h3>No new visitors!</h3').appendTo('#newvisitors');
-        }
         table=['<table>'];
         obj = data[0][0];
         $.each(obj, function(key, value){

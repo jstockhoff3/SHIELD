@@ -10,14 +10,13 @@ include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
 $sensor=$_GET['sensorName'];
 $motionStatus=$_GET['motionFound'];
-$triggerStatus=$_GET['triggerStatus'];
 
 
 $con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error'));
 $query = "SELECT * FROM Motion WHERE Name='$sensor';";
 $sth = mysqli_query($con,$query);
 
-if($sensor==null or $motionStatus==null or $triggerStatus==null){
+if($sensor==null or $motionStatus==null){
 	shield_output('None',0,'Missing Inputs');
 }
 else{
@@ -28,7 +27,6 @@ else{
 				$query=
 				"UPDATE Motion
 				SET MotionFound='$motionStatus',
-				TriggerAlarm='$triggerStatus',
 				TimeFound=NOW()
 				WHERE Name='$sensor'";
 			}
@@ -36,7 +34,6 @@ else{
 				$query=
 				"UPDATE Motion
 				SET MotionFound='$motionStatus',
-				TriggerAlarm='$triggerStatus'
 				WHERE Name='$sensor'";
 			}
 			$sth = mysqli_query($con,$query);
