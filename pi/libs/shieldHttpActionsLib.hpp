@@ -9,15 +9,7 @@ using namespace std;
 void uploadImage(char* imagePath); 
 size_t writeCallback(char* buf, size_t size, size_t nmemb, void* up);
 string http_GET(string URL);
-int checkPOEStatus(string POEname, int *locked, int *open, string *errorMsg);
 int isSuccess(string data, string *errorMsg);
-int lockPOE(string POEname);
-int unlockPOE(string POEname);
-int openPOE(string POEname);
-int closePOE(string POEName);
-int toggleSystemArmed(string systemName);
-int checkSystemStatus(string systemName, int* armed, int* alarmActive);
-int setMotionStatus(string sensorName, int motionStatus);
 
 string callBackData; //will hold the contents of the url
 
@@ -123,37 +115,6 @@ string http_GET(string URL){
   return result;
 }
 
-
-//Make a call to the API to check the status of a POE and update the locked/open variables accordingly
-int checkPOEStatus(string POEname, int *locked, int *open, string *errorMsg){
-
-  string rawData;
-  json_t *root, *theData;
-  json_error_t error;
-  int returnVal = 0;
-
-  string URL = "http://192.168.1.3/poe/getPOE.php?poeName=" + POEname;
-
-  rawData = http_GET(URL);
-  root = json_loads(rawData.c_str(), 0, &error);
-
-  if(isSuccess(rawData,errorMsg)){
-    theData = json_array_get(root, 0);
-    if(json_is_object(theData)){
-      *locked = !strcmp(json_string_value(json_object_get(theData,"Locked")),"1");
-      *open = !strcmp(json_string_value(json_object_get(theData,"Open")),"1");
-      returnVal = 1;
-    }else{
-      cout << "returned data JSON is not object" << endl;
-    }
-  }else{
-    cout << "isSuccess has failed" << endl;
-  }
-  json_decref(root);
-  return returnVal;
-}
-
-
 int isSuccess(string data, string *errorMsg){
 
   json_t *successData, *success, *root;
@@ -182,103 +143,4 @@ int isSuccess(string data, string *errorMsg){
   json_decref(root);
   return returnVal;
 
-}
-
-int lockPOE(string POEname){
-  string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName="
-               + POEname + "&action=lock";
-  string rawData = http_GET(URL);
-  if(isSuccess(rawData,errorMsg)){
-    return 1;
-  }else{
-    return 0;
-  }
-}
-
-int unlockPOE(string POEname){
-  string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName="
-               + POEname + "&action=unlock";
-  string rawData = http_GET(URL);
-  if(isSuccess(rawData,errorMsg)){
-    return 1;
-  }else{
-    return 0;
-  }
-}
-
-int openPOE(string POEname){
-  string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" 
-                + POEname + "&action=open";
-  string rawData = http_GET(URL);
-  if(isSuccess(rawData,errorMsg)){
-    return 1;
-  }else{
-    return 0;
-  }
-}
-
-int closePOE(string POEname){
-  string *errorMsg;
-  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" 
-                + POEname + "&action=close";
-  string rawData = http_GET(URL);
-  if(isSuccess(rawData,errorMsg)){
-    return 1;
-  }else{
-    return 0;
-  }
-}
-
-int toggleSystemArmed(string systemName){
-  string *errorMsg;
-  string URL = "http://192.168.1.3/motion/setMotionStatus.php?systemName=" + systemName;
-  string rawData = http_GET(URL);
-  if(isSuccess(rawData,errorMsg)){
-    returnVal = 1;
-  }else{
-    returnVal = 0;
-  }
-}
-
-int checkSystemStatus(string systemName, int* armed, int* alarmActive){
-  string rawData;
-  json_t *root, *theData;
-  json_error_t error;
-  int returnVal = 0;
-  string *errorMsg;
-  string URL = "http://192.168.1.3/system/getSystemStatus.php?systemName=" + systemName;
-  string rawData = http_GET(URL);
-  rawData = http_GET(URL);
-  root = json_loads(rawData.c_str(), 0, &error);
-
-  if(isSuccess(rawData,errorMsg)){
-    theData = json_array_get(root, 0);
-    if(json_is_object(theData)){
-      *armed = !strcmp(json_string_value(json_object_get(theData,"Armed")),"1");
-      *alarmActive = !strcmp(json_string_value(json_object_get(theData,"AlarmActive")),"1");
-      returnVal = 1;
-    }else{
-      cout << "returned data JSON is not object" << endl;
-    }
-  }else{
-    cout << "isSuccess has failed" << endl;
-  }
-
-  json_decref(root);
-  return returnVal;
-}
-
-int setMotionStatus(string sensorName, int motionStatus){
-  string *errorMsg;
-  string URL = "http://192.168.1.3/motion/setMotionStatus.php?sensorName="
-               + sensorName + "&motionFound=" + motionStatus + "&triggerStatus=1";
-  string rawData = http_GET(URL);
-  if(isSuccess(rawData,errorMsg)){
-    return 1;
-  }else{
-    return 0;
-  }
 }

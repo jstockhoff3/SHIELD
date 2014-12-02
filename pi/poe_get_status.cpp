@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <curl/curl.h>
-#include "libs/shieldHttpActionsLib.hpp"
+#include "libs/shieldLib.hpp"
 
 using namespace std;
 
