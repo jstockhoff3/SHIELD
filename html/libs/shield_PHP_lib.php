@@ -69,7 +69,6 @@ function poeAlarmTrigger($con){
 					mysqli_query($con,$query);
 					$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/doorOpen.jpg','$sysname',0,'$entname');";
 					mysqli_query($con,$query);
-					shield_output("Alarm triggered by entry $entname",1,'None');
 		    	}
 		    }
 		}
