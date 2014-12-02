@@ -1,31 +1,33 @@
 
-#include <stdio.h>
-#include <string.h>
- 
+#include <iostream>
+#include <fstream>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <curl/curl.h>
 #include "libs/shieldHttpActionsLib.hpp"
 
-int main(int argc, char *argv[])
-{
-   if (argc != 2) {
+using namespace std;
+
+int main(int argc, char *argv[]){
+   if(argc != 2){
         cout << "usage: " << argv[0] << " <URL> " << endl;
         cout << "\t <URL> -- The URL from which to fetch the JSON data" << endl;
         exit(1);
-    }else{
+   }else{
 
         string URL = string(argv[1]);
         int res = janssonTest(URL);
 
         if(res){
           //success
-          COUT << "the function 'janssonTest()' has succeeded." << endl;
+          cout << "the function 'janssonTest()' has succeeded." << endl;
 
-        }else
+        }else{
           //failure
-          COUT << "the function 'janssonTest()' has failed." << endl;
-        } 
-
-    }
-
+          cout << "the function 'janssonTest()' has failed." << endl;
+        }  
+  }
   return 0;
 }

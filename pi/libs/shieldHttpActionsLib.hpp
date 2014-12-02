@@ -1,9 +1,26 @@
-#include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
+#include <jansson.h>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
- 
+
+void uploadImage(char* imagePath); 
+size_t writeCallback(char* buf, size_t size, size_t nmemb, void* up);
+string http_GET(string URL);
+int checkPOEStatus(string POEname, int *locked, int *open, string *errorMsg);
+int isSuccess(string data, string *errorMsg);
+int lockPOE(string POEname);
+int unlockPOE(string POEname);
+int openPOE(string POEname);
+int closePOE(string POEName);
+int toggleSystemArmed(string systemName);
+int checkSystemStatus(string systemName, int* armed, int* alarmActive);
+int setMotionStatus(string sensorName, int motionStatus);
+
+string callBackData; //will hold the contents of the url
+
 void uploadImage(char* imagePath){
   CURL *curl;
   CURLcode res;
@@ -54,7 +71,7 @@ void uploadImage(char* imagePath){
     res = curl_easy_perform(curl);
     /* Check for errors */ 
     if(res != CURLE_OK){
-      fprintf(stderr, "curl_easy_perform() failed: %s\n",errorBuffer);
+      cout <<  "curl_easy_perform() failed:" << errorBuffer << endl;
     }else{
       cout << "Successfully uploaded" << endl;
     }
@@ -68,33 +85,18 @@ void uploadImage(char* imagePath){
   }
 }
 
+size_t writeCallback(char* buf, size_t size, size_t nmemb, void* up){ 
 
+    //callback must have this declaration
+    //buf is a pointer to the data that curl has for us
+    //size*nmemb is the size of the buffer
 
-struct MemoryStruct {
-  char *memory;
-  size_t size;
-};
- 
-static size_t
-WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-  size_t realsize = size * nmemb;
-  struct MemoryStruct *mem = (struct MemoryStruct *)userp;
- 
-  mem->memory = realloc(mem->memory, mem->size + realsize + 1);
-  if(mem->memory == NULL) {
-    /* out of memory! */ 
-    printf("not enough memory (realloc returned NULL)\n");
-    return 0;
-  }
- 
-  memcpy(&(mem->memory[mem->size]), contents, realsize);
-  mem->size += realsize;
-  mem->memory[mem->size] = 0;
- 
-  return realsize;
+    for (int c = 0; c<size*nmemb; c++)
+    {
+        callBackData.push_back(buf[c]);
+    }
+    return size*nmemb; //tell curl how many bytes we handled
 }
-
 
 
 string http_GET(string URL){
@@ -103,87 +105,175 @@ string http_GET(string URL){
   CURLcode res;
   string result;
 
-  struct MemoryStruct chunk;
- 
-  chunk.memory = malloc(1);  /* will be grown as needed by the realloc in the WriteMemoryCallback Function */ 
-  chunk.size = 0;    /* no data at this point */ 
- 
-  curl_global_init(CURL_GLOBAL_ALL);
- 
+  curl_global_init(CURL_GLOBAL_ALL); //pretty obvious
   curl = curl_easy_init();
-  if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, URL.cstr());
-    /* example.com is redirected, so we tell libcurl to follow redirection */ 
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-     /* send all data to the callback function  */ 
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
- 
-    /* we pass our 'chunk' struct to the callback function */ 
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
- 
-    /* Perform the request, res will get the return code */ 
-    res = curl_easy_perform(curl);
-    /* Check for errors */ 
-    if(res != CURLE_OK){
-      result = format("curl_easy_perform() failed: %s\n",
-              curl_easy_strerror(res));
-      COUT << result << endl;
-    }else{
-    /*
-     * Now, our chunk.memory points to a memory block that is chunk.size
-     * bytes big and contains the remote file.
-     *
-     * Do something nice with it!
-     */ 
+  curl_easy_setopt(curl, CURLOPT_URL, URL.c_str());
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &writeCallback);
+  //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L); //tell curl to output its progress
 
-    result = (string)chunk;
-    printf("%s\n", result.c_str());
+  curl_easy_perform(curl);
 
-  }
-    /* always cleanup */ 
-    curl_easy_cleanup(curl);
-  }
+  result = callBackData;
+  callBackData.clear();
 
-  if(chunk.memory)
-    free(chunk.memory);
-
-  /* we're done with libcurl, so clean it up */ 
+  curl_easy_cleanup(curl);
   curl_global_cleanup();
 
   return result;
 }
 
-int janssonTest(string URL){
 
-  string data;
+//Make a call to the API to check the status of a POE and update the locked/open variables accordingly
+int checkPOEStatus(string POEname, int *locked, int *open, string *errorMsg){
 
-  data = http_GET(URL);
-
-  json_t *root;
+  string rawData;
+  json_t *root, *theData;
   json_error_t error;
+  int returnVal = 0;
 
-  root = json_loads( data, 0, &error );
-  if(!root){
-      COUT << format("error: on line %d: %s\n", error.line, error.text) >> endl;
-      return 0;
+  string URL = "http://192.168.1.3/poe/getPOE.php?poeName=" + POEname;
+
+  rawData = http_GET(URL);
+  root = json_loads(rawData.c_str(), 0, &error);
+
+  if(isSuccess(rawData,errorMsg)){
+    theData = json_array_get(root, 0);
+    if(json_is_object(theData)){
+      *locked = !strcmp(json_string_value(json_object_get(theData,"Locked")),"1");
+      *open = !strcmp(json_string_value(json_object_get(theData,"Open")),"1");
+      returnVal = 1;
+    }else{
+      cout << "returned data JSON is not object" << endl;
+    }
+  }else{
+    cout << "isSuccess has failed" << endl;
   }
+  json_decref(root);
+  return returnVal;
+}
 
-  const char *key;
-  json_t *value;
 
-  void *iter = json_object_iter(root);
-  while(iter){
-      key = json_object_iter_key(iter);
-      value = json_object_iter_value(iter);
+int isSuccess(string data, string *errorMsg){
 
-      COUT << format("Key: %s, Value: %f\n", key, json_real_value(value)) << endl;
+  json_t *successData, *success, *root;
+  json_error_t error;
+  int returnVal = 0;
 
-      iter = json_object_iter_next(root, iter);
+  root = json_loads(data.c_str(), 0, &error);
+  if(!root){
+      *errorMsg = "error: on line: ";
+  }else if(!json_is_array(root)){
+      *errorMsg = "json is not an array!";
+  }else if(json_array_size(root) != 2){
+      *errorMsg = "json array size is expected to be 2.";
+  }else{
+    successData = json_array_get(root, 1);
+    success = json_object_get(successData,"Successful");
+  
+      if(!strcmp(json_string_value(success),"1")){
+        //the query was successful
+        returnVal = 1;
+      }else{
+        *errorMsg = json_string_value(json_object_get(successData,"Error"));
+      } 
   }
 
   json_decref(root);
+  return returnVal;
 
-  return 1;
 }
 
+int lockPOE(string POEname){
+  string *errorMsg;
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=lock";
+  string rawData = http_GET(URL);
+  if(isSuccess(rawData,errorMsg)){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+int unlockPOE(string POEname){
+  string *errorMsg;
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=unlock";
+  string rawData = http_GET(URL);
+  if(isSuccess(rawData,errorMsg)){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+int openPOE(string POEname){
+  string *errorMsg;
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=open";
+  string rawData = http_GET(URL);
+  if(isSuccess(rawData,errorMsg)){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+int closePOE(string POEname){
+  string *errorMsg;
+  string URL = "http://192.168.1.3/poe/setPOE.php?entryName=" + POEname + "&action=close";
+  string rawData = http_GET(URL);
+  if(isSuccess(rawData,errorMsg)){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+int toggleSystemArmed(string systemName){
+  string *errorMsg;
+  string URL = "http://192.168.1.3/motion/setMotionStatus.php?systemName=" + systemName;
+  string rawData = http_GET(URL);
+  if(isSuccess(rawData,errorMsg)){
+    returnVal = 1;
+  }else{
+    returnVal = 0;
+  }
+}
+
+int checkSystemStatus(string systemName, int* armed, int* alarmActive){
+  string rawData;
+  json_t *root, *theData;
+  json_error_t error;
+  int returnVal = 0;
+  string *errorMsg;
+  string URL = "http://192.168.1.3/system/getSystemStatus.php?systemName=" + systemName;
+  string rawData = http_GET(URL);
+  rawData = http_GET(URL);
+  root = json_loads(rawData.c_str(), 0, &error);
+
+  if(isSuccess(rawData,errorMsg)){
+    theData = json_array_get(root, 0);
+    if(json_is_object(theData)){
+      *armed = !strcmp(json_string_value(json_object_get(theData,"Armed")),"1");
+      *alarmActive = !strcmp(json_string_value(json_object_get(theData,"AlarmActive")),"1");
+      returnVal = 1;
+    }else{
+      cout << "returned data JSON is not object" << endl;
+    }
+  }else{
+    cout << "isSuccess has failed" << endl;
+  }
+
+  json_decref(root);
+  return returnVal;
+}
+
+int setMotionStatus(string sensorName, int motionStatus){
+  string *errorMsg;
+  string URL = "http://192.168.1.3/motion/setMotionStatus.php?sensorName=" + sensorName + "&motionFound=" + motionStatus + "&triggerStatus=1";
+  string rawData = http_GET(URL);
+  if(isSuccess(rawData,errorMsg)){
+    return 1;
+  }else{
+    return 0;
+  }
+}
