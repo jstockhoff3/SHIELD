@@ -18,7 +18,7 @@ else{
 			if($armed==1){
 				$query=
 				"UPDATE System
-				SET Armed=0
+				SET Armed=0,AlarmActive=0
 				WHERE Name='$name'";
 				mysqli_query($con,$query);
 				shield_output("$name is now Disarmed",1,'None');
