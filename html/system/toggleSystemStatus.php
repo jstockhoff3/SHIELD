@@ -21,6 +21,11 @@ else{
 				SET Armed=0,AlarmActive=0
 				WHERE Name='$name'";
 				mysqli_query($con,$query);
+				$query=
+				"UPDATE AlarmHistory
+				SET ACK=1
+				WHERE SystemName='$name'";
+				mysqli_query($con,$query);
 				shield_output("$name is now Disarmed",1,'None');
 			}
 			else if($armed==0){
