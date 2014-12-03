@@ -19,18 +19,21 @@ function motionAlarmTrigger($link,$sensor){
 	$triggerAlarm = $res['TriggerAlarm'];
 	$systemName = $res['SystemName'];
 	$motionFound = $res['MotionFound'];
-	$query = "SELECT Armed FROM System WHERE Name='$systemName';";
+	$query = "SELECT Armed,AlarmActive FROM System WHERE Name='$systemName';";
 	$res = mysqli_query($link,$query);
 	$res = mysqli_fetch_assoc($res);
+	$alarmactive = $res['AlarmActive'];
 	$systemArmed = $res['Armed'];
 	if($motionFound){
 		if($triggerAlarm){
 			if($systemArmed){
-				$query = "UPDATE System SET AlarmActive=1 WHERE Name='$systemName';";
-				mysqli_query($link,$query);
-				$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/motion.jpg','$systemName',0,'$sensor');";
-				mysqli_query($link,$query);
-				return 1;
+				if($alarmactive==0){
+					$query = "UPDATE System SET AlarmActive=1 WHERE Name='$systemName';";
+					mysqli_query($link,$query);
+					$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/motion.jpg','$systemName',0,'$sensor');";
+					mysqli_query($link,$query);
+					return 1;
+				}
 			}
 			else{
 				return 0;
