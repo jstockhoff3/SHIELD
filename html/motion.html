@@ -148,6 +148,19 @@
             });
     });
 
+    $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
+        alarmStatus = data[0]["AlarmActive"];
+        if(alarmStatus==1){
+            $("body").css("background-color","#ff3333");
+            $("#page-content-wrapper").prepend("<a href='alarms.html'>There is an active alarm!</a>");
+        }
+
+    });
+
+    setInterval(function(){
+            location.reload();
+        },5000);
+
     </script>
 
 </body>

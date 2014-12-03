@@ -27,7 +27,6 @@
 </head>
 
 <body>
-
     <!-- MENU TOGGLE EXAMPLE
     <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>  
     $("#menu-toggle").click(function(e) {
@@ -71,8 +70,18 @@
             <div class="container-fluid">
                 <div class="row">
                     <h1>Welcome <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></h1>
-                    Use the menu to manage your home
+                    <p>Use the menu to manage your home</p>
+                    <h3>Arm Your System:</h3>
                     <div class="col-lg-12">
+                        <div id='armsystem'></div>
+                    </div>
+                    <h3>Active Alarm:</h3>
+                    <div class="col-lg-12">
+                        <div id='alarms'></div>
+                    </div>
+                    <h3>Newest Visitor:</h3>
+                    <div class="col-lg-12">
+                        <div id='visitors'></div>
                     </div>
                 </div>
             </div>
@@ -95,6 +104,46 @@
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
     });
+
+    $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
+        alarmStatus = data[0]["AlarmActive"];
+        if(alarmStatus==1){
+            $("body").css("background-color","#ff3333");
+            $("#page-content-wrapper").prepend("<a href='alarms.html'>There is an active alarm!</a>");
+        }
+
+    });
+
+    $.getJSON('alarms/getNewestAlarm.php', function(data){ 
+        if(data[0]=="None"){
+            $("#alarms").append("There is no active alarm");
+        }
+        else{
+            time = data[0][0]["AlarmTime"];
+            system = data[0][0]["SystemName"];
+            image = data[0][0]["Image"];
+            trigger = data[0][0]["TriggeredBy"];
+            $("#alarms").append("There is an active alarm!<br><table><tr><th>Time triggered</th><th>System Name</th><th>Image</th><th>Triggered By</th></tr><tr><td>"+time+"</td><td>"+system+"</td><td><a href='"+image+"'><img src='"+image+"' height=50px width=50px></a></td><td>"+trigger+"</td></tr></table>");
+        }
+
+    });
+
+    $.getJSON('visitors/getNewestVisitor.php', function(data){ 
+        if(data[0]=="None"){
+            $("#visitors").append("You have had no new visitors");
+        }
+        else{
+            $("#visitors").append('<b>Time Visited:</b> '+data[0]["TimeVisited"]+"<br><a target='_blank' href='"+data[0]["Image"]+"'><img src='"+data[0]["Image"]+"' height=200px width=200px></a>");
+        }
+    });
+
+    setInterval(function(){
+            location.reload();
+        },5000);
+
+
+
+
     
     </script>
 
