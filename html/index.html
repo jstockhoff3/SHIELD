@@ -109,7 +109,7 @@
         alarmStatus = data[0]["AlarmActive"];
         if(alarmStatus==1){
             $("body").css("background-color","#ff3333");
-            $("#page-content-wrapper").prepend("<a href='alarms.html'>There is an active alarm!</a>");
+            $("#page-content-wrapper").prepend("<a href='alarms.html'>There is an active alarm!</a><br>Camera Feed:<br><img src='images/newcaptures/alarm.png' width=150px height=150px");
         }
 
     });
