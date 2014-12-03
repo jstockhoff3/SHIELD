@@ -14,16 +14,24 @@ $sysname=$_GET['systemName'];
 $con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error'));
 $res = mysqli_query($con,"SELECT * FROM Motion WHERE Name='$sensor'");
 	
-if($sensor==null or $sysname==null or $triggerStatus==null){
+if($sensor==null or $sysname==null){
 	shield_output('None',0,'Missing Inputs');
 }
 else{
 	if($res){
 		if(mysqli_num_rows($res) == 0){
-			$query=
-			"INSERT INTO Motion (Name,SystemName,TriggerAlarm) VALUES ('$sensor','$sysname','$triggerStatus');";
-			mysqli_query($con,$query);
-			shield_output("Entry $sensor Created",1,'None');
+			if($triggerStatus==null){
+				$query=
+				"INSERT INTO Motion (Name,SystemName) VALUES ('$sensor','$sysname');";
+				mysqli_query($con,$query);
+				shield_output("Entry $sensor Created",1,'None');
+			}
+			else{
+				$query=
+				"INSERT INTO Motion (Name,SystemName,TriggerAlarm) VALUES ('$sensor','$sysname','$triggerStatus');";
+				mysqli_query($con,$query);
+				shield_output("Entry $sensor Created",1,'None');
+			}
 		}
 		else{
 			shield_output('None',0,'Duplicate Sensor Found');

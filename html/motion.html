@@ -75,6 +75,16 @@
                     <div class="col-lg-12">
                         <div id='allsensors'></div>
                     </div>
+                    <h3>Add Sensor</h3>
+                    <div class="col-lg-12">
+                        <form id='newpoeform'>
+                        New Sensor Name:    <input type="text" name="newname">
+                        <br><br>
+                        System Name:    <input type="text" name="sysname">
+                        <br><br>
+                        <input type="submit" id="submit-poe">
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,19 +116,28 @@
                     table = table + '<th>Motion Last Found</th>';
             }
             else if(key=='TriggerAlarm'){
-                    table = table + '<th>Triggers Alarm?</th>';
+                   // table = table + '<th>Triggers Alarm?</th>';
             }
             else{
                 table = table +'<th>'+key+'</th>';
             }
             });
-        table = table + '<th>Toggle Trigger?</th>';
+        table = table + '<th>Delete?</th>';
 
         obj = data[0];
         $.each(obj,function(idx,obj){
             table = table + '<tr>';
             $.each(obj,function(key,value){
                 if(key=='TriggerAlarm'){
+                    // if(value==1)
+                    // {
+                    //     table = table + '<td>Yes</td>'
+                    // }
+                    // else if(value==0){
+                    //     table = table + '<td>No</td>'
+                    // }
+                }
+                else if(key=='MotionFound'){
                     if(value==1)
                     {
                         table = table + '<td>Yes</td>'
@@ -134,15 +153,26 @@
                     senseName=value;
                 }
             })
-            table = table + '<td><input id="triggerToggle" sens='+senseName+' type="button" value="Toggle"></td></tr>';
+            table = table + '<td><input id="sensorDelete" sens='+senseName+' type="button" value="Delete"></td></tr>';
         });
         $( table + '</table>').appendTo('#allsensors');
     });
 
-    $("#allsensors").on('click', 'input[id=triggerToggle]',function(){
+    $("#newpoeform").submit(function(event) {
+        event.preventDefault();
+        var $form = $( this ),
+        entryName = $form.find('input[name="newname"]').val();
+        sysname = $form.find('input[name="sysname"]').val();
+        $.get("motion/newMotionSensor.php",{sensorName:entryName,systemName:sysname})
+            .done(function(data){
+                location.reload();
+            });
+    });
+
+    $("#allsensors").on('click', 'input[id=sensorDelete]',function(){
         button = $(this);
-        var sens = button.attr("sens");
-        $.get("motion/motionToggle.php",{sens:sens})
+        var entryName = button.attr("sens");
+        $.get("motion/deleteSensor.php",{sensorName:entryName})
             .done(function(data){
                 window.location.reload();
             });
