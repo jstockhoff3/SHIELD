@@ -68,6 +68,7 @@
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
+            <div id="alarmNotification"></div>
             <div class="container-fluid">
                 <div class="row">
                     <h1>Visitors <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a> </h1>   
@@ -216,11 +217,28 @@
     $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
         alarmStatus = data[0]["AlarmActive"];
         if(alarmStatus==1){
+            $("#alarmNotification").empty();
             $("body").css("background-color","#ff3333");
-            $("#page-content-wrapper").prepend("<a href='alarms.html'>There is an active alarm!</a>");
+            $("#alarmNotification").append("<a href='alarms.html'><b>There is an active alarm!</a></b><br>Camera Feed:<br><a href='images/newcaptures/alarm.png' target=_blank><img src='images/alarms/alarm.png' width=200px height=150px></a>");
         }
 
-    });
+     });
+
+        vers = 0;
+        setInterval(function(){
+            vers = vers + 1;
+            $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
+                alarmStatus = data[0]["AlarmActive"];
+                if(alarmStatus==1){
+                    $("<img src='images/alarms/alarm.png?version="+vers+"' width=400px height=300px></a>").load(function() {
+                        $("#alarmNotification").empty();
+                        $("body").css("background-color","#ff3333");
+                        $("#alarmNotification").append("<a href='alarms.html'><b>There is an active alarm!</a></b><br>Camera Feed:<br>");
+                        $(this).appendTo('#alarmNotification');
+                    });
+                }  
+            }); 
+        },500);
 
     $.getJSON('visitors/getNewVisitors.php', function(data){ 
         if(data[0]=="None"){
@@ -229,9 +247,6 @@
 
     });
 
-    setInterval(function(){
-            location.reload();
-        },5000);
     
     </script>
 

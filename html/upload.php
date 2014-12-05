@@ -41,7 +41,7 @@ if ($uploadOk == 0) {
 // if everything is ok, try to upload file
 } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.\n";
+        //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.\n";
     } else {
         echo "Sorry, there was an error uploading your file.\n";
     }
@@ -65,7 +65,7 @@ else{
         $query=
         "INSERT INTO AllVisitors (TimeVisited,Image) VALUES (NOW(),'$image');";
         mysqli_query($con,$query);
-        shield_output("Visitor created",1,'None');
+        shield_output("Visitor created from upload.php",1,'None');
     }
     else{
         shield_output('None',0,'Query Error');

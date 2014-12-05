@@ -5,28 +5,24 @@
 include(dirname(__FILE__)."/../libs/shield_DB_info.php");
 include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 
-$sensor=$_GET['sensorName'];
+$name=$_GET['poeName'];
 
 $con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error')); 
-$query = "SELECT * FROM Motion WHERE Name='$sensor';";
+$query = "SELECT * FROM PointsOfEntry WHERE EntryName='$name';";
 $sth = mysqli_query($con,$query);
 
-if($sensor==null){
-	shield_output('None',0,'No sensorName entered');
+if($name==null){
+	shield_output('None',0,'No poeName entered');
 }
 else{
 	if($sth){
 		if($r = mysqli_fetch_assoc($sth)){
-			$return = array(
-				'SystemName' => $r["SystemName"],
-				'MotionFound' => $r["MotionFound"],
-				'TriggerAlarm' => $r["TriggerAlarm"],
-				'TimeFound' => $r["TimeFound"]
-				);
-			shield_output($return,1,'None');
+			$query = "UPDATE PointsOfEntry SET Doorbell=1 WHERE EntryName='$name';";
+			mysqli_query($con,$query);
+			shield_output('Doorbell rung',1,'None');
 		}
 		else{
-			shield_output('None',0,'Sensor Not Found');
+			shield_output('None',0,'POE Not Found');
 		}
 	}
 	else{

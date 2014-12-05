@@ -1,6 +1,6 @@
 <?php
 
-include(dirname(__FILE__)."shield_DB_info.php");
+include("shield_DB_info.php");
 
 function shield_output($data,$success,$err){
 	$output = array();
@@ -32,7 +32,6 @@ function motionAlarmTrigger($link,$sensor){
 					mysqli_query($link,$query);
 					$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/motion.jpg','$systemName',0,'$sensor');";
 					mysqli_query($link,$query);
-					return 1;
 				}
 			}
 			else{
@@ -45,6 +44,37 @@ function motionAlarmTrigger($link,$sensor){
 	}
 	else{
 		return 0;
+	}
+}
+
+function openDoorAlarmTrigger($con){
+
+	$query = "SELECT * FROM System where Name='Main';";
+	$res = mysqli_query($con,$query);
+	$res = mysqli_fetch_assoc($res);
+	$armed = $res["Armed"];
+	//$activealarm = $res["AlarmActive"];
+	if($armed==1){
+		$query = "UPDATE System SET AlarmActive=1 WHERE Name='Main';";
+		mysqli_query($con,$query);
+		//if($activealarm==0){
+			$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/doorOpen.jpg','Main',0,'Front_Door');";
+			mysqli_query($con,$query);
+		//}
+	}
+
+
+	$query = "SELECT * FROM PointsOfEntry where EntryName='Front_Door';";
+	$res = mysqli_query($con,$query);
+	$res = mysqli_fetch_assoc($res);
+	$locked = $res["Locked"];
+	if($armed==1){
+		$query = "UPDATE System SET AlarmActive=1 WHERE Name='Main';";
+		mysqli_query($con,$query);
+		//if($activealarm==0){
+			$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/doorOpen.jpg','Main',0,'Front_Door');";
+			mysqli_query($con,$query);
+		//}
 	}
 }
 
@@ -62,16 +92,19 @@ function poeAlarmTrigger($con){
 		    $sysname = $r["SystemName"];
 		    $entname = $r["EntryName"];
 		    $open = $r["Open"];
-		    $query = "SELECT * FROM System WHERE Name='$sysname';";
+		    $query = "SELECT * FROM System WHERE Name='Main';";
 		    $sth = mysqli_query($con,$query);
 		    $r = mysqli_fetch_assoc($sth);
+		    $activealarm = $r["AlarmActive"];
 		    $armed = $r["Armed"];
 		    if($armed==1){
 		    	if($open==1){
-		    		$query = "UPDATE System SET AlarmActive=1 WHERE Name='$sysname';";
+		    		$query = "UPDATE System SET AlarmActive=1 WHERE Name='Main';";
 					mysqli_query($con,$query);
-					$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/doorOpen.jpg','$sysname',0,'$entname');";
-					mysqli_query($con,$query);
+					if($activealarm==0){
+						$query = "INSERT INTO AlarmHistory (AlarmTime,Image,SystemName,ACK,TriggeredBy) VALUES (NOW(),'images/doorOpen.jpg','$sysname',0,'$entname');";
+						mysqli_query($con,$query);
+					}
 		    	}
 		    }
 		}
@@ -90,6 +123,29 @@ function generateRandomString($length = 10) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
     return $randomString;
+}
+
+function getAlarmDate(){
+
+	global $mysql_host;
+	global $mysql_password;
+	global $mysql_user;
+	global $mysql_database;
+
+	$con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error')); 
+	$query = "SELECT * FROM AlarmHistory WHERE ACK=0;";
+	$sth = mysqli_query($con,$query);
+	$r = mysqli_fetch_assoc($sth);
+
+	if($r==null){
+		mysqli_close($con);
+		return 0;
+	}
+	else{
+		mysqli_close($con);
+		return $r["AlarmTime"];
+	}
+
 }
 
 ?>

@@ -68,6 +68,7 @@
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
+            <div id="alarmNotification"></div>
             <div class="container-fluid">
                 <div class="row">
                     <h1>Alarms <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a> </h1>   
@@ -108,7 +109,7 @@
         $.each(obj, function(key, value){
             table = table +'<th>'+key+'</th>';
             });
-        //table = table + '<th>Acknowledge?</th>';
+        table = table + '<th>Capture History</th>';
 
         obj = data[0];
         $.each(obj,function(idx,obj){
@@ -117,6 +118,10 @@
                 if(key=='Image'){
                     table = table + '<td><a href="'+value+'" target="_blank"><img src='+value+' height=50px width=50px></a></td>';
                 }
+                else if(key=='AlarmTime'){
+                    alarmtime = value;
+                    table = table + '<td>'+value+'</td>';
+                }
                 else{
                     table = table + '<td>'+value+'</td>';
                 }
@@ -124,7 +129,7 @@
                     curEntry = value;
                 }
             })
-            //table = table + '<td><input id="alarmACK" entry="'+curEntry+'" type="button" value="ACK"></td></tr>';
+            table = table + "<td><a href='images/alarms/" +alarmtime+ "/''>Link</td></tr>";
         });
         $( table + '</table>').appendTo('#fullalarmhistory');
     });
@@ -169,11 +174,61 @@
     $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
         alarmStatus = data[0]["AlarmActive"];
         if(alarmStatus==1){
+            $("#alarmNotification").empty();
             $("body").css("background-color","#ff3333");
-            $("#page-content-wrapper").prepend("<a href='alarms.html'>There is an active alarm!</a>");
+            $("#alarmNotification").append("<a href='alarms.html'><b>There is an active alarm!</a></b><br>Camera Feed:<br><a href='images/alarms/alarm.png' target=_blank><img src='images/alarms/alarm.png' width=400px height=300px></a>");
         }
 
-    });
+     });
+
+    setInterval(function(){
+        $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
+            alarmStatus = data[0]["AlarmActive"];
+            if(alarmStatus==1){
+                $("#alarmNotification").empty();
+                $("body").css("background-color","#ff3333");
+                $("#alarmNotification").append("<a href='alarms.html'><b>There is an active alarm!</a></b><br>Camera Feed:<br><a href='images/newcaptures/alarm.png' target=_blank><img src='images/alarms/alarm.png' width=200px height=150px></a>");
+            }
+
+        });
+
+        $.getJSON('alarms/getNewAlarms.php', function(data){ 
+            $("#newalarms").empty();
+            table=['<table>'];
+            obj = data[0][0];
+            $.each(obj, function(key, value){
+                table = table +'<th>'+key+'</th>';
+                });
+            table = table + '<th>Acknowledge?</th>';
+
+            obj = data[0];
+            $.each(obj,function(idx,obj){
+                table = table + '<tr>';
+                $.each(obj,function(key,value){
+                    if(key=='Image'){
+                        table = table + '<td><a href="'+value+'" target="_blank"><img src='+value+' height=50px width=50px></a></td>';
+                    }
+                    else{
+                        table = table + '<td>'+value+'</td>';
+                    }
+                    if(key=='AlarmTime'){
+                        curEntry = value;
+                    }
+                })
+                table = table + '<td><input id="alarmACK" entry="'+curEntry+'" type="button" value="ACK"></td></tr>';
+            });
+            $( table + '</table>').appendTo('#newalarms');
+        });
+
+        $.getJSON('alarms/getNewAlarms.php', function(data){ 
+            if(data[0]=="None"){
+                $("#newalarms").empty();
+                $("#newalarms").append("No active alarm");
+            }
+
+        });
+
+    },3000);
 
     $.getJSON('alarms/getNewAlarms.php', function(data){ 
         if(data[0]=="None"){
@@ -182,9 +237,6 @@
 
     });
 
-    setInterval(function(){
-            location.reload();
-        },5000);
 
     </script>
 

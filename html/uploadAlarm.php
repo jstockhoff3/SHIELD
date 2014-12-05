@@ -4,7 +4,7 @@ include(dirname(__FILE__)."/libs/shield_DB_info.php");
 include(dirname(__FILE__)."/libs/shield_PHP_lib.php");
 
 
-$target_dir = "images/newcaptures/";
+$target_dir = "images/alarms/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
 $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -41,7 +41,7 @@ if ($uploadOk == 0) {
 // if everything is ok, try to upload file
 } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.\n";
+        //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.\n";
     } else {
         echo "Sorry, there was an error uploading your file.\n";
     }
@@ -51,27 +51,17 @@ $new = "alarm.png";
 $new = $target_dir . basename($new);
 rename($target_file,$new);
 
-// $image=$new;
+date_default_timezone_set('America/New_York');
+$date = date('Y-m-d H:i');
+$target_dir2 = "images/alarms/".getAlarmDate()."/";
 
-// $con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error'));
-// $res = mysqli_query($con,"SELECT * FROM AllVisitors");
+if (!file_exists($target_dir2)) {
+    mkdir($target_dir2, 0777, true);
+ }
 
-// if($image==null){
-//     shield_output('None',0,'No image path entered');
-// }
-// else{   
-//     if($res){
-//         $query=
-//         "INSERT INTO AllVisitors (TimeVisited,Image) VALUES (NOW(),'$image');";
-//         mysqli_query($con,$query);
-//         shield_output("Visitor created",1,'None');
-//     }
-//     else{
-//         shield_output('None',0,'Query Error');
-//     }
-// }
-
-
-// mysqli_close($con);
+$img = generateRandomString();
+$img = "$img.$imageFileType";
+$img = $target_dir2 . basename($img);
+copy($new,$img);
 
 ?>

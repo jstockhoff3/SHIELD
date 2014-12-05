@@ -1,152 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+    <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-    <title>SHIELD - Dashboard</title>
+        <title>SHIELD - Dashboard</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+        <!-- Bootstrap Core CSS -->
+        <link href="css/bootstrap.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="css/simple-sidebar.css" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link href="css/simple-sidebar.css" rel="stylesheet">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
 
-</head>
+    <body>
+        <!-- MENU TOGGLE EXAMPLE
+        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>  
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+        -->
 
-<body>
-    <!-- MENU TOGGLE EXAMPLE
-    <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>  
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
-    -->
+        <div id="wrapper">
 
-    <div id="wrapper">
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper">
+                <ul class="sidebar-nav">
+                    <li class="sidebar-brand">
+                        <a href="index.html"><img src="images/shieldLogo.png"></a>
+                    </li>
+                    <li>
+                        <a href="index.html">Dashboard</a>
+                    </li> 
+                    <li>
+                        <a href="systems.html">Systems</a>
+                    </li> 
+                    <li>
+                        <a href="poe.html">Points Of Entry</a>
+                    </li>
+                    <li>
+                        <a href="visitors.html">Visitors</a>
+                    </li>
+                    <li>
+                        <a href="alarms.html">Alarms</a>
+                    </li>
+                    <li>
+                        <a href="motion.html">Motion</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /#sidebar-wrapper -->
 
-        <!-- Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                <li class="sidebar-brand">
-                    <a href="index.html"><img src="images/shieldLogo.png"></a>
-                </li>
-                <li>
-                    <a href="index.html">Dashboard</a>
-                </li> 
-                <li>
-                    <a href="systems.html">Systems</a>
-                </li> 
-                <li>
-                    <a href="poe.html">Points Of Entry</a>
-                </li>
-                <li>
-                    <a href="visitors.html">Visitors</a>
-                </li>
-                <li>
-                    <a href="alarms.html">Alarms</a>
-                </li>
-                <li>
-                    <a href="motion.html">Motion</a>
-                </li>
-            </ul>
-        </div>
-        <!-- /#sidebar-wrapper -->
-
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <div class="container-fluid">
-                <div class="row">
-                    <h1>Welcome <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></h1>
-                    <p>Use the menu to manage your home</p>
-                    <h3>Arm Your System:</h3>
-                    <div class="col-lg-12">
-                        <div id='armsystem'></div>
-                    </div>
-                    <h3>Active Alarm:</h3>
-                    <div class="col-lg-12">
-                        <div id='alarms'></div>
-                    </div>
-                    <h3>Newest Visitor:</h3>
-                    <div class="col-lg-12">
-                        <div id='visitors'></div>
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <div id="alarmNotification"></div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <h1>Welcome <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></h1>
+                        <p>Use the menu to manage your home</p>
+                        <!--<h3>System Management:</h3>-->
+                        <div class="col-lg-12">
+                            <div id='motionstatus'></div>
+                        </div>
+                        <h3>Active Alarm:</h3>
+                        <div class="col-lg-12">
+                            <div id='alarms'></div>
+                        </div>
+                        <h3>Newest Visitor:</h3>
+                        <div class="col-lg-12">
+                            <div id='visitors'></div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- /#page-content-wrapper -->
+
         </div>
-        <!-- /#page-content-wrapper -->
+        <!-- /#wrapper -->
 
-    </div>
-    <!-- /#wrapper -->
+        <!-- jQuery -->
+        <script src="js/jquery.js"></script>
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+        <!-- Bootstrap Core JavaScript -->
+        <script src="js/bootstrap.min.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+        <!-- Menu Toggle Script -->
+        <script>
 
-    <!-- Menu Toggle Script -->
-    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
 
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
+        $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
+            alarmStatus = data[0]["AlarmActive"];
+            if(alarmStatus==1){
+                $("#alarmNotification").empty();
+                $("body").css("background-color","#ff3333");
+                $("#alarmNotification").append("<a href='alarms.html'><b>There is an active alarm!</a></b><br>Camera Feed:<br><a href='images/alarms/alarm.png' target=_blank><img src='images/alarms/alarm.png' width=400px height=300px></a>");
+            }
 
-    $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
-        alarmStatus = data[0]["AlarmActive"];
-        if(alarmStatus==1){
-            $("body").css("background-color","#ff3333");
-            $("#page-content-wrapper").prepend("<a href='alarms.html'>There is an active alarm!</a><br>Camera Feed:<br><img src='images/newcaptures/alarm.png' width=150px height=150px");
-        }
+        });
 
-    });
+        $.getJSON('alarms/getNewestAlarm.php', function(data){ 
+            if(data[0]=="None"){
+                $("#alarms").append("There is no active alarm");
+            }
+            else{
+                time = data[0][0]["AlarmTime"];
+                system = data[0][0]["SystemName"];
+                image = data[0][0]["Image"];
+                trigger = data[0][0]["TriggeredBy"];
+                $("#alarms").append("There is an active alarm!<br><table><tr><th>Time triggered</th><th>System Name</th><th>Image</th><th>Triggered By</th><th>Capture History</th></tr><tr><td>"+time+"</td><td>"+system+"</td><td><a href='"+image+"'><img src='"+image+"' height=50px width=65px></a></td><td>"+trigger+"</td><td><a href='images/alarms/" +time+ "/''>Link</td></tr></table>");
+            }
 
-    $.getJSON('alarms/getNewestAlarm.php', function(data){ 
-        if(data[0]=="None"){
-            $("#alarms").append("There is no active alarm");
-        }
-        else{
-            time = data[0][0]["AlarmTime"];
-            system = data[0][0]["SystemName"];
-            image = data[0][0]["Image"];
-            trigger = data[0][0]["TriggeredBy"];
-            $("#alarms").append("There is an active alarm!<br><table><tr><th>Time triggered</th><th>System Name</th><th>Image</th><th>Triggered By</th></tr><tr><td>"+time+"</td><td>"+system+"</td><td><a href='"+image+"'><img src='"+image+"' height=50px width=50px></a></td><td>"+trigger+"</td></tr></table>");
-        }
+        });
 
-    });
+        $.getJSON('visitors/getNewestVisitor.php', function(data){ 
+            if(data[0]=="None"){
+                $("#visitors").append("You have had no new visitors");
+            }
+            else{
+                $("#visitors").append('<b>Time Visited:</b> '+data[0]["TimeVisited"]+"<br><a target='_blank' href='"+data[0]["Image"]+"'><img src='"+data[0]["Image"]+"' height=150px width=200px></a>");
+            }
+        });
 
-    $.getJSON('visitors/getNewestVisitor.php', function(data){ 
-        if(data[0]=="None"){
-            $("#visitors").append("You have had no new visitors");
-        }
-        else{
-            $("#visitors").append('<b>Time Visited:</b> '+data[0]["TimeVisited"]+"<br><a target='_blank' href='"+data[0]["Image"]+"'><img src='"+data[0]["Image"]+"' height=200px width=200px></a>");
-        }
-    });
+        setInterval(function(){
 
-    setInterval(function(){
-            location.reload();
-        },5000);
+            $.getJSON('alarms/getNewestAlarm.php', function(data){ 
+                $("#alarms").empty();
+                if(data[0]=="None"){
+                    $("#alarms").append("There is no active alarm");
+                }
+                else{
+                    time = data[0][0]["AlarmTime"];
+                    system = data[0][0]["SystemName"];
+                    image = data[0][0]["Image"];
+                    trigger = data[0][0]["TriggeredBy"];
+                    $("#alarms").append("There is an active alarm!<br><table><tr><th>Time triggered</th><th>System Name</th><th>Image</th><th>Triggered By</th></tr><tr><td>"+time+"</td><td>"+system+"</td><td><a href='"+image+"'><img src='"+image+"' height=50px width=60px></a></td><td>"+trigger+"</td></tr></table>");
+                }
 
+            });
 
+            $.getJSON('visitors/getNewestVisitor.php', function(data){ 
+                $("#visitors").empty();
+                if(data[0]=="None"){
+                    $("#visitors").append("You have had no new visitors");
+                }
+                else{
+                    $("#visitors").append('<b>Time Visited:</b> '+data[0]["TimeVisited"]+"<br><a target='_blank' href='"+data[0]["Image"]+"'><img src='"+data[0]["Image"]+"' height=150px width=200px></a>");
+                }
+            });
 
+        },3000);
 
-    
-    </script>
+        vers = 0;
+        setInterval(function(){
+            vers = vers + 1;
+            $.getJSON('system/getSystemStatus.php?systemName=Main', function(data){ 
+                alarmStatus = data[0]["AlarmActive"];
+                if(alarmStatus==1){
+                    $("<img src='images/alarms/alarm.png?version="+vers+"' width=400px height=300px></a>").load(function() {
+                        $("#alarmNotification").empty();
+                        $("body").css("background-color","#ff3333");
+                        $("#alarmNotification").append("<a href='alarms.html'><b>There is an active alarm!</a></b><br>Camera Feed:<br>");
+                        $(this).appendTo('#alarmNotification');
+                    });
+                }  
+            }); 
+        },1000);
 
-</body>
-
+        
+        </script>
+    </body>
 </html>

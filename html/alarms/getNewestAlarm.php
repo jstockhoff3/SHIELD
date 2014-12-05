@@ -18,7 +18,6 @@ if($sth){
 		shield_output($rows,1,'None');
 	}
 	else{
-		$success = 0;
 		shield_output('None',0,'No New Alarms');
 	}
 }

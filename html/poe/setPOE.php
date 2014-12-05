@@ -5,11 +5,12 @@ include(dirname(__FILE__)."/../libs/shield_PHP_lib.php");
 $name=$_GET['entryName'];
 $status=$_GET['action'];
 
+
 $con = mysqli_connect($mysql_host,$mysql_user,$mysql_password,$mysql_database) or die(shield_output('None',0,'Database Connection Error'));
 $query = "SELECT * FROM PointsOfEntry WHERE EntryName='$name';";
 $sth = mysqli_query($con,$query);
 
-if($name==null or action==null ){
+if($name==null or $status==null ){
 	shield_output('None',0,'Missing inputs');
 }
 else{
@@ -22,6 +23,13 @@ else{
 				WHERE EntryName='$name'";
 				mysqli_query($con,$query);
 				shield_output("$name is now locked",1,'None');
+				$query = "SELECT * FROM System where Name='Main';";
+				$res = mysqli_query($con,$query);
+				$res = mysqli_fetch_assoc($res);
+				$activealarm = $res["AlarmActive"];
+				if($activealarm==0){
+					openDoorAlarmTrigger($con);
+				}
 			}
 			else if($status=="unlock"){
 				$query=
@@ -39,6 +47,13 @@ else{
 				WHERE EntryName='$name'";
 				mysqli_query($con,$query);
 				shield_output("$name is now open",1,'None');
+				$query = "SELECT * FROM System where Name='Main';";
+				$res = mysqli_query($con,$query);
+				$res = mysqli_fetch_assoc($res);
+				$activealarm = $res["AlarmActive"];
+				if($activealarm==0){
+					openDoorAlarmTrigger($con);
+				}
 			}
 			else if($status=="close"){
 				$query=
